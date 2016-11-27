@@ -9,43 +9,32 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.GeneralSecurityException;
 
 /**
  * Created by mariusz on 26.11.16.
  */
 public class SimpleAesLibrary implements AesLibrary {
 
-    public static final String AES = "AES";
-    public static final String UTF_8 = "UTF-8";
+    private static final String AES = "AES";
+    private static final String UTF_8 = "UTF-8";
 
     @Override
-    public boolean encrypt(String fileName, String fileOutputName, String key) {
-        try {
+    public void encrypt(String fileName, String fileOutputName, String key) throws GeneralSecurityException, IOException {
             Cipher cipher = Cipher.getInstance(AES);
             SecretKeySpec secretKeySpec = getSecretKeySpec(key);
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
             byte[] encryptedBytes = cipher.doFinal(readFile(fileName));
             writeToFile(fileOutputName, encryptedBytes);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     @Override
-    public boolean decrypt(String fileName, String fileOutputName, String key) {
-        try {
+    public void decrypt(String fileName, String fileOutputName, String key) throws GeneralSecurityException, IOException {
             Cipher cipher = Cipher.getInstance(AES);
             SecretKeySpec secretKeySpec = getSecretKeySpec(key);
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
             byte[] encryptedBytes = cipher.doFinal(readFile(fileName));
             writeToFile(fileOutputName, encryptedBytes);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     private SecretKeySpec getSecretKeySpec(String key) throws UnsupportedEncodingException {
